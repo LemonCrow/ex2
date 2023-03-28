@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Setter
 public class Memo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package kr.ac.poly.ex2.repository;
 
+import jakarta.transaction.Transactional;
 import kr.ac.poly.ex2.entity.Memo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -91,5 +94,61 @@ public class MemoRepositoryTests {
         result.get().forEach(memo -> {
             System.out.println(memo);
         });
+    }
+
+    @Test
+    public void testQueryMethod(){
+        List<Memo> list = memoRepository.findByMnoBetweenOrderByMnoDesc(50L, 80L);
+        for (Memo memo: list){
+            System.out.println(memo);
+        }
+    }
+
+    @Test
+    public void testQueryMethodwithPagable(){
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("mno").descending());
+        Page<Memo> result = memoRepository.findAllByMnoBetween(20L, 50L, pageable);
+        result.get().forEach(memo -> System.out.println(memo));
+//        for (Memo memo: list){
+//            System.out.println(memo);
+//        }
+    }
+
+    @Test
+    @Commit
+    @Transactional
+    public void testDeleteQueryMethod(){
+        memoRepository.deleteAllByMnoLessThan(10L);
+    }
+    @Test
+    public void testGetListDesc(){
+        List<Memo> list = memoRepository.getListDesc();
+        for (Memo memo: list){
+            System.out.println(memo);
+        }
+    }
+
+    @Test
+    public void testUpdateMemoText(){
+        int updateCount = memoRepository.updateMemoText(30L, "30행 수정됨");
+//        int updateCount = memoRepository.updateMemoText(30L, "mno가 30인 내용 수정");
+
+    }
+
+    @Test
+    public void testUpdateMemoText2(){
+        Memo memo = new Memo();
+        memo.setMno(31);
+        memo.setMemoText("31행 수정 Memo객체 참조값을 param으로 사용");
+        int updateCount = memoRepository.updateMemoText2(memo);
+    }
+
+    @Test
+    public void testGetListWithQuery(){
+        Pageable pageable = PageRequest.of(0, 50, Sort.by("mno").descending());
+        Page<Memo> result = memoRepository.getListWithQuery(32L, pageable);
+        result.get().forEach(
+                memo -> System.out.println(memo)
+        );
     }
 }
